@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: Inventario
+  datasource:
+    url: jdbc:mysql://localhost:3306/micro_market
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect # Dialecto para MySQL (traduce las consultas sql a MySQL)
+    hibernate: # sub configuracion para usar el orm
+      ddl-auto: none
+    show-sql: true # Muestra sentencias sql traducidas a lenguaje sql
+    properties: # propiedades extras de hibernate
+      hibernate:
+        format-sql: true # Formatear SQL en los logs para mayor legibilidad
+
+logging: # Seccion de logs
+  level: # Niveles por paquete / clase
+    org.springframework.web: DEBUG # Logs detallados para web (request HTTP)
+    org.hibernate.SQL: DEBUG # Muestras queries SQL
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # Muestra valores bound en queries nativas (remplaza '?' por 'value')
+
+server:
+  port: 9091
