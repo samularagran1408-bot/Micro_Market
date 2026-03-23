@@ -1,7 +1,7 @@
 package com.Micro_Marlet.Inventario.DTO;
 
 import lombok.Data;
-
+// 
 @Data
 public class SuppliersRequestDTO {
     private String name;
