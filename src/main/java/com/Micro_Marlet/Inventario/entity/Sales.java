@@ -37,7 +37,7 @@ public class Sales {
     
     @ManyToOne(fetch = FetchType)
     @JoinColumn(name = "employee_id", nullable = false)
-    private Employees employees;
+    private Employees employee;
 
     @OneToMany(mappedBy = "sale", cascade = cascadeType.ALL, orphanRemoval = true)
     private List<Sale_Details> sale_Details = new ArrayList<>();
