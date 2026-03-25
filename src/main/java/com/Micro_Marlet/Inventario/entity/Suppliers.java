@@ -29,7 +29,7 @@ public class Suppliers {
     @Column(name = "status")
     private Boolean status = true;  // Valor por defecto TRUE
     
-    // Relación ManyToMany con Product (para después)
+    // Relación ManyToMany con Product 
     @ManyToMany(mappedBy = "suppliers")
     private Set<Products> products;
 }

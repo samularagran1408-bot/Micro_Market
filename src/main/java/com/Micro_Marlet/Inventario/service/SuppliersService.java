@@ -68,7 +68,7 @@ public class SuppliersService {
         return response;
     }
 
-    public void updateSupplier(Long nit, SuppliersRequestDTO request) {
+    public SuppliersResponseDTO updateSupplier(Long nit, SuppliersRequestDTO request) {
         Suppliers supplier = suppliersRepository.findByNit(nit)
             .orElseThrow(() -> new IllegalArgumentException("Supplier not found with nit: " + nit));
         supplier.setName(request.getName());
@@ -77,6 +77,7 @@ public class SuppliersService {
         supplier.setAddress(request.getAddress());
         supplier.setStatus(request.getStatus());
         suppliersRepository.save(supplier);
+        return findByNit(nit);
     }
 
     public void deleteSupplier(Long nit) {
