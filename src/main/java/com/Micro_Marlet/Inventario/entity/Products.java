@@ -3,7 +3,6 @@ package com.Micro_Marlet.Inventario.entity;
 import lombok.Data;
 
 import java.util.HashSet;
-import java.util.Locale.Category;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -38,7 +37,7 @@ public class Products {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
+    private Categories category;
     
     // Relación ManyToMany con Supplier 
     @ManyToMany
