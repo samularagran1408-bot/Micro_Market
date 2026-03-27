@@ -21,70 +21,36 @@ public class SuppliersController {
     private final SuppliersService suppliersService;
 
     @PostMapping
-    public ResponseEntity<SuppliersResponseDTO> createSupplier(@Valid @RequestBody SuppliersRequestDTO request) {
-        try {
-            SuppliersResponseDTO response = suppliersService.createSupplier(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public ResponseEntity<SuppliersResponseDTO> createSupplier(
+            @Valid @RequestBody SuppliersRequestDTO request) {
+        SuppliersResponseDTO response = suppliersService.createSupplier(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<SuppliersResponseDTO>> getAllSuppliers() {
-        try {
-            List<SuppliersResponseDTO> suppliers = suppliersService.getAllSuppliers();
-            return ResponseEntity.ok(suppliers);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        List<SuppliersResponseDTO> suppliers = suppliersService.getAllSuppliers();
+        return ResponseEntity.ok(suppliers);
     }
 
     @GetMapping("/{nit}")
     public ResponseEntity<SuppliersResponseDTO> findByNit(@PathVariable Long nit) {
-        try {
-            SuppliersResponseDTO supplier = suppliersService.findByNit(nit);
-            return ResponseEntity.ok(supplier);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+        SuppliersResponseDTO supplier = suppliersService.findByNit(nit);
+        return ResponseEntity.ok(supplier);
     }
 
     @PutMapping("/{nit}")
-    public ResponseEntity<SuppliersResponseDTO> updateSupplier(
-            @PathVariable Long nit, 
-            @Valid @RequestBody SuppliersRequestDTO request) {
-        try {
-            SuppliersResponseDTO response = suppliersService.updateSupplier(nit, request);
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
+    public ResponseEntity<SuppliersResponseDTO> updateSupplier(@PathVariable Long nit, @Valid @RequestBody SuppliersRequestDTO request) {
+        SuppliersResponseDTO response = suppliersService.updateSupplier(nit, request);
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{nit}")
     public ResponseEntity<Void> deleteSupplier(@PathVariable Long nit) {
-        try {
-            suppliersService.deleteSupplier(nit);
-            return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        suppliersService.deleteSupplier(nit);
+        return ResponseEntity.noContent().build();
     }
-    // Activar con patch porque solo actualiza un recurso
+
     @PatchMapping("/{nit}/activate")
     public ResponseEntity<SuppliersResponseDTO> activateSupplier(@PathVariable Long nit) {
         SuppliersResponseDTO response = suppliersService.activateSupplier(nit);
