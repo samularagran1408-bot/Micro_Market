@@ -1,4 +1,4 @@
-package com.Micro_Marlet.Inventario.service;
+    package com.Micro_Marlet.Inventario.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
