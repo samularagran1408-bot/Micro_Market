@@ -4,7 +4,6 @@ import lombok.Data;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.Set;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +34,10 @@ public class Sales {
     @Column(name = "total")
     private BigDecimal total;
     
-    @ManyToOne(fetch = FetchType)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     private Employees employee;
 
-    @OneToMany(mappedBy = "sale", cascade = cascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sale", orphanRemoval = true)
     private List<Sale_Details> sale_Details = new ArrayList<>();
 }
