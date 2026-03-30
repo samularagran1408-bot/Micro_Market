@@ -12,8 +12,5 @@ public class ProductsResponseDTO {
     private Integer stock;
     private Boolean status;
     private Long categoryId;
-    public void setCategoryName(String name2) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setCategoryName'");
-    }
+    private String categoryName;  // ← Este campo debe existir
 }
