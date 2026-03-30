@@ -2,7 +2,6 @@ package com.Micro_Marlet.Inventario.entity;
 
 import lombok.Data;
 import jakarta.persistence.*;
-import java.util.Set;
 
 @Data
 @Entity
@@ -29,7 +28,7 @@ public class Suppliers {
     @Column(name = "status")
     private Boolean status = true;  // Valor por defecto TRUE
     
-    // Relación ManyToMany con Product (para después)
-    @ManyToMany(mappedBy = "suppliers")
-    private Set<Products> products;
+    // Relación ManyToMany con Product 
+    //@ManyToMany(mappedBy = "suppliers")
+    //private Set<Products> products;
 }
