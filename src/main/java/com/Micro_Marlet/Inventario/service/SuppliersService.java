@@ -10,6 +10,7 @@ import com.Micro_Marlet.Inventario.DTO.SuppliersRequestDTO;
 import com.Micro_Marlet.Inventario.entity.Suppliers;
 import com.Micro_Marlet.Inventario.DTO.SuppliersResponseDTO;
 import com.Micro_Marlet.Inventario.repository.SuppliersRepository;
+import com.Micro_Marlet.Inventario.exception.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +26,7 @@ public class SuppliersService {
         if (request.getEmail() != null && !request.getEmail().isEmpty()) {
             Suppliers supplier = suppliersRepository.findByEmail(request.getEmail());
             if (supplier != null) {
-                throw new IllegalArgumentException("Supplier with email already exists: " + supplier.getEmail());
+                throw new ResourceNotFoundException("Supplier with email already exists: " + supplier.getEmail());
             }
         }
         
@@ -53,14 +54,14 @@ public class SuppliersService {
     @Transactional(readOnly = true)
     public SuppliersResponseDTO findByNit(Long nit) {
         Suppliers supplier = suppliersRepository.findByNit(nit)
-            .orElseThrow(() -> new IllegalArgumentException("Supplier not found with nit: " + nit));
+            .orElseThrow(() -> new ResourceNotFoundException("Supplier not found", nit));
         return mapToResponseDTO(supplier);
     }
 
     @Transactional
     public SuppliersResponseDTO updateSupplier(Long nit, SuppliersRequestDTO request) {
         Suppliers supplier = suppliersRepository.findByNit(nit)
-            .orElseThrow(() -> new IllegalArgumentException("Supplier not found with nit: " + nit));
+            .orElseThrow(() -> new ResourceNotFoundException("Supplier not found", nit));
         
         // Actualizar solo los campos que vienen en la request
         if (request.getName() != null) {
@@ -86,7 +87,7 @@ public class SuppliersService {
     @Transactional
     public void deleteSupplier(Long nit) {
         Suppliers supplier = suppliersRepository.findByNit(nit)
-            .orElseThrow(() -> new IllegalArgumentException("Supplier not found with nit: " + nit));
+            .orElseThrow(() -> new ResourceNotFoundException("Supplier not found", nit));
         
         // Soft Delete
         supplier.setStatus(false);
@@ -96,7 +97,7 @@ public class SuppliersService {
     @Transactional
     public SuppliersResponseDTO activateSupplier(Long nit) {
         Suppliers supplier = suppliersRepository.findByNit(nit)
-            .orElseThrow(() -> new IllegalArgumentException("Supplier not found with nit: " + nit));
+            .orElseThrow(() -> new ResourceNotFoundException("Supplier not found", nit));
         
         supplier.setStatus(true);
         Suppliers activatedSupplier = suppliersRepository.save(supplier);

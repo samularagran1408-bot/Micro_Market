@@ -1,6 +1,8 @@
 package com.Micro_Marlet.Inventario.DTO;
 
 import lombok.Data;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import java.math.BigDecimal;
