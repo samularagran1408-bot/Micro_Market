@@ -1,5 +1,5 @@
 package com.Micro_Marlet.Inventario.exception;
-
+//
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import java.time.LocalDateTime;

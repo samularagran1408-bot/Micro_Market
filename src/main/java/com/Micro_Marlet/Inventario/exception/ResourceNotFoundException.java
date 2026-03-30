@@ -1,5 +1,5 @@
 package com.Micro_Marlet.Inventario.exception;
-
+//
 public class ResourceNotFoundException extends RuntimeException {
     
     public ResourceNotFoundException(String message) {
