@@ -40,5 +40,4 @@ public class Sales {
 
     @OneToMany(mappedBy = "sale", orphanRemoval = true)
     private List<Sale_Details> sale_Details = new ArrayList<>();
-    
 }
