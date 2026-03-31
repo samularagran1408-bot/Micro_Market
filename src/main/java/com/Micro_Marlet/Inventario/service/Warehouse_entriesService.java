@@ -24,17 +24,20 @@ public class Warehouse_entriesService {
     private final ProductsRepository productsRepository;
     private final SuppliersRepository suppliersRepository;
 
-    // Entrada al almacén
+    // Entrada al almacén (registrar entrada y actualizar stock)
     @Transactional
     public Warehouse_entriesResponseDTO registerEntry(Warehouse_entriesRequestDTO requestDTO) {
         // Buscar el producto por ID
         Products product = productsRepository.findById(requestDTO.getProductId())
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + requestDTO.getProductId()));
 
         // Buscar el proveedor por NIT
         Suppliers supplier = suppliersRepository.findById(requestDTO.getSupplierNit())
-                .orElseThrow(() -> new ResourceNotFoundException("Proveedores no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con NIT: " + requestDTO.getSupplierNit()));
 
+        // Guardar stock anterior
+        Integer previousStock = product.getStock();
+        
         // Crear la entrada al almacén
         Warehouse_entries warehouseEntry = new Warehouse_entries();
         warehouseEntry.setQuantity(requestDTO.getQuantity());
@@ -43,37 +46,47 @@ public class Warehouse_entriesService {
         warehouseEntry.setSupplier(supplier);
 
         // Guardar la entrada
-        warehouseEntriesRepository.save(warehouseEntry);
+        Warehouse_entries savedEntry = warehouseEntriesRepository.save(warehouseEntry);
+        
+        // Actualizar el stock del producto (Regla de negocio)
+        Integer newStock = previousStock + requestDTO.getQuantity();
+        product.setStock(newStock);
+        productsRepository.save(product);
 
-        // Devolver la respuesta
-        return maptoResponseDTO(warehouseEntry);
+        // Devolver la respuesta con el stock actualizado
+        return mapToResponseDTO(savedEntry, newStock);
     }
 
+    // Obtener todas las entradas
     @Transactional(readOnly = true)
     public List<Warehouse_entriesResponseDTO> getAllEntries() {
         return warehouseEntriesRepository.findAll().stream()
-                .map(this::maptoResponseDTO)
+                .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
+    // Obtener entrada por ID
     @Transactional(readOnly = true)
     public Warehouse_entriesResponseDTO getEntryById(Long id) {
         Warehouse_entries warehouseEntry = warehouseEntriesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Entrada al almacén no encontrada"));
-        return maptoResponseDTO(warehouseEntry);
+                .orElseThrow(() -> new ResourceNotFoundException("Entrada al almacén no encontrada con ID: " + id));
+        return mapToResponseDTO(warehouseEntry);
     }
 
+    // Eliminar entrada (NO actualiza el stock - cuidado con esto)
     @Transactional
     public void deleteEntry(Long id) {
         Warehouse_entries warehouseEntry = warehouseEntriesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Entrada al almacén no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Entrada al almacén no encontrada con ID: " + id));
 
         warehouseEntriesRepository.delete(warehouseEntry);
     }
 
+    // Actualizar entrada
+    @Transactional
     public Warehouse_entriesResponseDTO updateEntry(Long id, Warehouse_entriesRequestDTO requestDTO) {
         Warehouse_entries warehouseEntry = warehouseEntriesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Entrada al almacén no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Entrada al almacén no encontrada con ID: " + id));
 
         // Actualizar solo los campos que vienen en la request
         if (requestDTO.getQuantity() != null) {
@@ -84,54 +97,87 @@ public class Warehouse_entriesService {
         }
         if (requestDTO.getProductId() != null) {
             Products product = productsRepository.findById(requestDTO.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + requestDTO.getProductId()));
             warehouseEntry.setProduct(product);
         }
         if (requestDTO.getSupplierNit() != null) {
             Suppliers supplier = suppliersRepository.findById(requestDTO.getSupplierNit())
-                    .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con NIT: " + requestDTO.getSupplierNit()));
             warehouseEntry.setSupplier(supplier);
         }
 
         // Guardar los cambios
-        warehouseEntriesRepository.save(warehouseEntry);
+        Warehouse_entries updatedEntry = warehouseEntriesRepository.save(warehouseEntry);
 
-        return maptoResponseDTO(warehouseEntry);
+        return mapToResponseDTO(updatedEntry);
     }
 
+    // Obtener entradas por producto ID
     @Transactional(readOnly = true)
     public List<Warehouse_entriesResponseDTO> getEntriesByProductId(Long productId) {
-        // Buscamos todas las entradas de ese producto
-        List<Warehouse_entries> entries = warehouseEntriesRepository.findByProductId(productId);
+        // Verificar que el producto exista
+        Products product = productsRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + productId));
+        
+        // Buscar todas las entradas de ese producto
+        List<Warehouse_entries> entries = warehouseEntriesRepository.findByProduct(product);
         
         if (entries.isEmpty()) {
             throw new ResourceNotFoundException("No hay entradas de almacén para el producto ID: " + productId);
         }
+        
         return entries.stream()
-                .map(this::maptoResponseDTO)
+                .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
     
+    // Obtener entradas por proveedor NIT
     @Transactional(readOnly = true)
     public List<Warehouse_entriesResponseDTO> getEntriesBySupplierNit(Long supplierNit) {
-        // Buscamos todas las entradas de ese proveedor
-        List<Warehouse_entries> entries = warehouseEntriesRepository.findBySupplierNit(supplierNit);
+        // Verificar que el proveedor exista
+        Suppliers supplier = suppliersRepository.findById(supplierNit)
+                .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado con NIT: " + supplierNit));
+        
+        // Buscar todas las entradas de ese proveedor
+        List<Warehouse_entries> entries = warehouseEntriesRepository.findBySupplier(supplier);
         
         if (entries.isEmpty()) {
             throw new ResourceNotFoundException("No hay entradas de almacén para el proveedor NIT: " + supplierNit);
         }
+        
         return entries.stream()
-                .map(this::maptoResponseDTO)
+                .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    private Warehouse_entriesResponseDTO maptoResponseDTO(Warehouse_entries warehouseEntry) {
+    
+    // Conversión con stock actualizado (para registerEntry)
+    private Warehouse_entriesResponseDTO mapToResponseDTO(Warehouse_entries warehouseEntry, Integer updatedStock) {
+        Warehouse_entriesResponseDTO responseDTO = mapToResponseDTO(warehouseEntry);
+        responseDTO.setUpdatedStock(updatedStock);
+        return responseDTO;
+    }
+    
+    // Conversión base (sin stock actualizado)
+    private Warehouse_entriesResponseDTO mapToResponseDTO(Warehouse_entries warehouseEntry) {
         Warehouse_entriesResponseDTO responseDTO = new Warehouse_entriesResponseDTO();
         responseDTO.setId(warehouseEntry.getId());
         responseDTO.setQuantity(warehouseEntry.getQuantity());
         responseDTO.setEntryDate(warehouseEntry.getEntryDate());
-        responseDTO.setProductId(warehouseEntry.getProduct().getId());
-        responseDTO.setSupplierNit(warehouseEntry.getSupplier().getNit());
+        
+        // Información del producto
+        if (warehouseEntry.getProduct() != null) {
+            responseDTO.setProductId(warehouseEntry.getProduct().getId());
+            responseDTO.setProductName(warehouseEntry.getProduct().getName());
+            responseDTO.setProductBarcode(warehouseEntry.getProduct().getBarcode());
+        }
+        
+        // Información del proveedor
+        if (warehouseEntry.getSupplier() != null) {
+            responseDTO.setSupplierNit(warehouseEntry.getSupplier().getNit());
+            responseDTO.setSupplierName(warehouseEntry.getSupplier().getName());
+        }
+        
         return responseDTO;
     }
 }

@@ -1,22 +1,23 @@
 package com.Micro_Marlet.Inventario.DTO;
 
 import java.time.LocalDate;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class Warehouse_entriesRequestDTO {
-    @NotBlank(message = "La cantidad es obligatoria")
-    @Size(max = 100)
+    @NotNull(message = "La cantidad es obligatoria")
+    @Min(value = 1, message = "La cantidad debe ser mayor a 0")
     private Integer quantity;
 
-    @NotBlank(message = "La fecha de entrada es obligatoria")
+    @NotNull(message = "La fecha de entrada es obligatoria")
     private LocalDate entryDate;
 
-    @NotBlank(message = "El ID del producto es obligatorio")
+    @NotNull(message = "El ID del producto es obligatorio")
     private Long productId;
 
-    @NotBlank(message = "El NIT del proveedor es obligatorio")
+    @NotNull(message = "El NIT del proveedor es obligatorio")
     private Long supplierNit;
 }
