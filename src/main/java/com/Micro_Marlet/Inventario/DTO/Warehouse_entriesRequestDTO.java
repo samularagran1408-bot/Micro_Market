@@ -14,7 +14,9 @@ public class Warehouse_entriesRequestDTO {
     @NotBlank(message = "La fecha de entrada es obligatoria")
     private LocalDate entryDate;
 
+    @NotBlank(message = "El ID del producto es obligatorio")
     private Long productId;
 
+    @NotBlank(message = "El NIT del proveedor es obligatorio")
     private Long supplierNit;
 }
