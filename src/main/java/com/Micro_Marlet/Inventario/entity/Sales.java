@@ -38,6 +38,6 @@ public class Sales {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employees employee;
 
-    @OneToMany(mappedBy = "sale", orphanRemoval = true)
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sale_Details> sale_Details = new ArrayList<>();
 }

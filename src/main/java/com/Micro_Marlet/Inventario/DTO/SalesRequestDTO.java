@@ -1,17 +1,22 @@
 package com.Micro_Marlet.Inventario.DTO;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import com.Micro_Marlet.Inventario.entity.Employees;
+import java.util.List;
 
 @Data
 public class SalesRequestDTO {
-    private LocalDateTime date = LocalDateTime.now();
-    private BigDecimal subtotal;
-    private BigDecimal tax;
-    private BigDecimal total;
-    private Employees employee;
+
+    @NotNull(message = "Indica el empleado")
+    private Long employeeId;
+
+    private LocalDateTime date;
+
+    @NotEmpty(message = "Agrega al menos un detalle")
+    @Valid
+    private List<Sale_DetailsRequestDTO> details;
 }
