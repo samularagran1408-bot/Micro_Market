@@ -3,11 +3,13 @@ package com.Micro_Marlet.Inventario.DTO;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.lang.NonNull;
 
 @Data
 public class Sale_DetailsRequestDTO {
 
     @NotNull(message = "Falta el producto")
+    @NonNull
     private Long productId;
 
     @NotNull(message = "Falta la cantidad")

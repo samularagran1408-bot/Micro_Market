@@ -13,6 +13,7 @@ import com.Micro_Marlet.Inventario.repository.EmployeesRepository;
 import com.Micro_Marlet.Inventario.repository.ProductsRepository;
 import com.Micro_Marlet.Inventario.repository.SalesRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -90,7 +91,7 @@ public class SalesService {
     }
 
     @Transactional(readOnly = true)
-    public SalesResponseDTO getSaleById(Long id) {
+    public SalesResponseDTO getSaleById(@NonNull Long id) {
         Sales sale = salesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Venta", id));
         return mapToResponse(sale);
