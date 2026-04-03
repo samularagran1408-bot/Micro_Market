@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import com.Micro_Marlet.Inventario.DTO.SalesRequestDTO;
@@ -34,7 +35,7 @@ public class SalesController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SalesResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<SalesResponseDTO> findById(@PathVariable @NonNull Long id) {
         SalesResponseDTO sale = salesService.getSaleById(id);
         return ResponseEntity.ok(sale);
     }
