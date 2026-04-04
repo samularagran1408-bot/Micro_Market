@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import com.Micro_Marlet.Inventario.DTO.ProductsRequestDTO;
@@ -34,7 +35,7 @@ public class ProductsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductsResponseDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<ProductsResponseDTO> findById(@NonNull @PathVariable Long id) {
         ProductsResponseDTO product = productService.getProductById(id);
         return ResponseEntity.ok(product);
     }
@@ -46,19 +47,19 @@ public class ProductsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductsResponseDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductsRequestDTO request) {
+    public ResponseEntity<ProductsResponseDTO> updateProduct(@NonNull @PathVariable Long id, @Valid @RequestBody ProductsRequestDTO request) {
         ProductsResponseDTO response = productService.updateProduct(id, request);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteProduct(@NonNull @PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<ProductsResponseDTO> activateProduct(@PathVariable Long id) {
+    public ResponseEntity<ProductsResponseDTO> activateProduct(@NonNull @PathVariable Long id) {
         ProductsResponseDTO response = productService.activateProduct(id);
         return ResponseEntity.ok(response);
     }
