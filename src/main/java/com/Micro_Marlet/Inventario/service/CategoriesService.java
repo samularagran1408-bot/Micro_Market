@@ -2,8 +2,11 @@ package com.Micro_Marlet.Inventario.service;
 
 import com.Micro_Marlet.Inventario.DTO.CategoriesRequestDTO;
 import com.Micro_Marlet.Inventario.DTO.CategoriesResponseDTO;
+import com.Micro_Marlet.Inventario.DTO.CategoryProductDTO;
 import com.Micro_Marlet.Inventario.entity.Categories;
+import com.Micro_Marlet.Inventario.entity.Products;
 import com.Micro_Marlet.Inventario.repository.CategoriesRepository;
+import com.Micro_Marlet.Inventario.repository.ProductsRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +20,13 @@ public class CategoriesService {
 
     private final CategoriesRepository categoriesRepository;
 
-    public CategoriesService(CategoriesRepository categoriesRepository) {
+    private final ProductsRepository productsRepository;
+
+    public CategoriesService(
+            CategoriesRepository categoriesRepository,
+            ProductsRepository productsRepository) {
         this.categoriesRepository = categoriesRepository;
+        this.productsRepository = productsRepository;
     }
 
     public List<CategoriesResponseDTO> getAllActive() {
@@ -31,7 +39,12 @@ public class CategoriesService {
     public CategoriesResponseDTO getById(Long id) {
         Categories entity = categoriesRepository.findByIdAndStatusTrue(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category no encontrada"));
-        return toResponse(entity);
+        CategoriesResponseDTO dto = toResponse(entity);
+        dto.setProducts(
+                productsRepository.findAllByCategory_Id(id).stream()
+                        .map(this::toCategoryProductDto)
+                        .collect(Collectors.toList()));
+        return dto;
     }
 
     @Transactional
@@ -66,6 +79,13 @@ public class CategoriesService {
         dto.setName(entity.getName());
         dto.setDescription(entity.getDescription());
         dto.setStatus(entity.getStatus());
+        return dto;
+    }
+
+    private CategoryProductDTO toCategoryProductDto(Products product) {
+        CategoryProductDTO dto = new CategoryProductDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
         return dto;
     }
 }
