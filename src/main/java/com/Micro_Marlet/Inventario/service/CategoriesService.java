@@ -41,7 +41,7 @@ public class CategoriesService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category no encontrada"));
         CategoriesResponseDTO dto = toResponse(entity);
         dto.setProducts(
-                productsRepository.findAllByCategoryId(id).stream()
+                productsRepository.findAllByCategory_Id(id).stream()
                         .map(this::toCategoryProductDto)
                         .collect(Collectors.toList()));
         return dto;
