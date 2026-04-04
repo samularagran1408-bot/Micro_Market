@@ -1,8 +1,9 @@
-    package com.Micro_Marlet.Inventario.service;
+package com.Micro_Marlet.Inventario.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +60,7 @@ public class ProductService {
     }
     
     @Transactional(readOnly = true)
-    public ProductsResponseDTO getProductById(Long id) {
+    public ProductsResponseDTO getProductById(@NonNull Long id) {
         Products product = productsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Producto", id));
         return mapToResponseDTO(product);
@@ -73,7 +74,7 @@ public class ProductService {
     }
     
     @Transactional
-    public ProductsResponseDTO updateProduct(Long id, ProductsRequestDTO request) {
+    public ProductsResponseDTO updateProduct(@NonNull Long id, ProductsRequestDTO request) {
         Products product = productsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Producto", id));
         
@@ -107,7 +108,7 @@ public class ProductService {
     }
     
     @Transactional
-    public void deleteProduct(Long id) {
+    public void deleteProduct(@NonNull Long id) {
         Products product = productsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Producto", id));
         
@@ -116,7 +117,7 @@ public class ProductService {
     }
     
     @Transactional
-    public ProductsResponseDTO activateProduct(Long id) {
+    public ProductsResponseDTO activateProduct(@NonNull Long id) {
         Products product = productsRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Producto", id));
         

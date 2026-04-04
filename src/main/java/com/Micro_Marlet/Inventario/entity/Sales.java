@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+//terminado
 @Data
 @Entity
 @Table(name = "sales")
@@ -31,8 +32,7 @@ public class Sales {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     private Employees employee;
-    
-    // Corrección: CascadeType.ALL (con mayúscula inicial)
+
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Sale_Details> saleDetails = new ArrayList<>();  // ← También usa singular para la clase
+    private List<Sale_Details> sale_Details = new ArrayList<>();
 }

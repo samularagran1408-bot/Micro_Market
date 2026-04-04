@@ -1,8 +1,10 @@
 package com.Micro_Marlet.Inventario.DTO;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.lang.NonNull;
 
 @Data
 public class ProductsRequestDTO {
@@ -22,5 +24,7 @@ public class ProductsRequestDTO {
 
     private Boolean status;
 
+    @NotNull(message = "La categoría es obligatoria")
+    @NonNull
     private Long categoryId;
 }
