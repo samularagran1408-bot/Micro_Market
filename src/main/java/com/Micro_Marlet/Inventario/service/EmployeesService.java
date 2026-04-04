@@ -70,6 +70,14 @@ public class EmployeesService {
         employeesRepository.save(entity);
     }
 
+    @Transactional
+    public EmployeesResponseDTO activate(Long id) {
+        Employees entity = employeesRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
+        entity.setStatus(true);
+        return toResponse(employeesRepository.save(entity));
+    }
+
     private void applyRequest(Employees entity, EmployeesRequestDTO request) {
         entity.setIdNumber(request.getIdNumber());
         entity.setFullName(request.getFullName());
