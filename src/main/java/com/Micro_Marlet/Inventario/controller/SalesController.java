@@ -13,7 +13,7 @@ import com.Micro_Marlet.Inventario.service.SalesService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
+//terminado
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sales")

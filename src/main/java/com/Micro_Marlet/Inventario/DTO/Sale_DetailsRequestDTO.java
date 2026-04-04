@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.lang.NonNull;
-
+//terminado
 @Data
 public class Sale_DetailsRequestDTO {
 

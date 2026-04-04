@@ -8,7 +8,7 @@ import org.springframework.lang.NonNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+//terminado
 @Data
 public class SalesRequestDTO {
 
