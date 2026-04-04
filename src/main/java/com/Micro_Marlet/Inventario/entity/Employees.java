@@ -40,6 +40,8 @@ public class Employees {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal salary;
 
-    @Column(nullable = false)
-    private Boolean status = true;
+    public String getFullName() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFullName'");
+    }
 }
