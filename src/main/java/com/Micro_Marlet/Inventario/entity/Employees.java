@@ -13,7 +13,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "employees")
@@ -28,39 +27,11 @@ public class Employees {
     @Column(name = "id_number", nullable = false, unique = true, length = 20)
     private String idNumber;
 
-    @Column(nullable = false, length = 100)
-    private String nombre;
-
-    @Column(nullable = false, unique = true, length = 100)
-    private String email;
-
-    @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
-
-    @Column(length = 20)
-    private String telefono;
-
-    @Column(name = "fecha_registro", nullable = false)
-    private LocalDateTime fechaRegistro;
-
-    @Column(name = "ultimo_acceso")
-    private LocalDateTime ultimoAcceso;
+    @Column(name = "full_name", nullable = false, length = 200)
+    private String fullName;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private EmployeeEstado estado;
-
-    @Column(name = "foto_perfil", length = 255)
-    private String fotoPerfil;
-
-    @Column(name = "token_recuperacion", length = 255)
-    private String tokenRecuperacion;
-
-    @Column(name = "token_expiracion")
-    private LocalDateTime tokenExpiracion;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 32)
     private EmployeePosition position;
 
     @Column(name = "hire_date", nullable = false)
