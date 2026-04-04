@@ -1,8 +1,6 @@
 package com.Micro_Marlet.Inventario.DTO;
 
-import com.Micro_Marlet.Inventario.entity.EmployeePosition;
 import lombok.Data;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -10,16 +8,10 @@ import java.time.LocalDate;
 public class EmployeesResponseDTO {
 
     private Long id;
-
     private String idNumber;
-
     private String fullName;
-
-    private EmployeePosition position;
-
+    private String position;
     private LocalDate hireDate;
-
     private BigDecimal salary;
-
     private Boolean status;
 }
