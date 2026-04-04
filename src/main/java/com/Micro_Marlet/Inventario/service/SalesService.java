@@ -39,9 +39,9 @@ public class SalesService {
         Sales sale = new Sales();
         sale.setEmployee(employee);
         if (request.getDate() != null) {
-            sale.setDate(request.getDate());
+            sale.setSaleDate(request.getDate());
         } else {
-            sale.setDate(LocalDateTime.now());
+            sale.setSaleDate(LocalDateTime.now());
         }
 
         for (Sale_DetailsRequestDTO lineDto : request.getDetails()) {
@@ -113,10 +113,10 @@ public class SalesService {
     private SalesResponseDTO mapToResponse(Sales sale) {
         SalesResponseDTO dto = new SalesResponseDTO();
         dto.setId(sale.getId());
-        dto.setDate(sale.getDate());
-        dto.setSubtotal(sale.getSubtotal());
+        dto.setDate(sale.getSaleDate());
+        dto.setTotal(sale.getSubtotal());
         dto.setTax(sale.getTax());
-        dto.setTotal(sale.getTotal());
+        dto.setSubtotal(sale.getTotal());
         if (sale.getEmployee() != null) {
             dto.setEmployeeId(sale.getEmployee().getId());
             dto.setEmployeeName(sale.getEmployee().getFullName());

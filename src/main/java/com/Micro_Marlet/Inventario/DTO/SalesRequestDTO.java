@@ -1,24 +1,22 @@
 package com.Micro_Marlet.Inventario.DTO;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.lang.NonNull;
-
+import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
-//terminado
+
 @Data
+@NoArgsConstructor  // ← Obligatorio para deserialización
+@AllArgsConstructor // ← Opcional pero recomendado
 public class SalesRequestDTO {
-
-    @NotNull(message = "Indica el empleado")
-    @NonNull
+    
+    @NotNull(message = "El ID del empleado es obligatorio")
     private Long employeeId;
-
-    private LocalDateTime date;
-
-    @NotEmpty(message = "Agrega al menos un detalle")
-    @Valid
+    
+    private LocalDateTime date;  // Opcional, si no viene usa fecha actual
+    
+    @NotNull(message = "Los detalles de la venta son obligatorios")
     private List<Sale_DetailsRequestDTO> details;
 }
