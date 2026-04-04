@@ -52,8 +52,9 @@ public class ProductService {
     
     @Transactional(readOnly = true)
     public List<ProductsResponseDTO> getAllProducts() {
-        return productsRepository.findAll().stream()
-            .filter(product -> product.getStatus() != null)
+        // Mostrar solo los productos activos (status = true)
+        List<Products> products = productsRepository.findByStatusTrue();
+        return products.stream()
             .map(this::mapToResponseDTO)
             .collect(Collectors.toList());
     }
