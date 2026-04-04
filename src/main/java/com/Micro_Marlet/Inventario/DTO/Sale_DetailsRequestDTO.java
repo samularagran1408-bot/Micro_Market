@@ -1,10 +1,23 @@
 package com.Micro_Marlet.Inventario.DTO;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public class Sale_DetailsRequestDTO {
 
+    @NotNull(message = "El id de la venta es obligatorio")
     private Long saleId;
+
+    @NotNull(message = "El id del producto es obligatorio")
     private Long productId;
+
+    @NotNull(message = "La cantidad es obligatoria")
+    @Positive(message = "La cantidad debe ser al menos 1")
     private Integer quantity;
+
+    @NotNull(message = "El precio unitario es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El precio unitario no puede ser negativo")
     private Double unitPrice;
 
     public Sale_DetailsRequestDTO() {

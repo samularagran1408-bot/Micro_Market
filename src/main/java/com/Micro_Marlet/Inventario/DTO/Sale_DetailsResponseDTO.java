@@ -1,5 +1,8 @@
 package com.Micro_Marlet.Inventario.DTO;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder({ "id", "saleId", "productId", "quantity", "unitPrice", "subtotal" })
 public class Sale_DetailsResponseDTO {
 
     private Long id;
