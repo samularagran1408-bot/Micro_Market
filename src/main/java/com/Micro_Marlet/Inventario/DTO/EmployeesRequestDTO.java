@@ -1,5 +1,21 @@
 package com.Micro_Marlet.Inventario.DTO;
 
+import com.Micro_Marlet.Inventario.entity.EmployeePosition;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
 public class EmployeesRequestDTO {
-    
+
+    private String idNumber;
+
+    private String fullName;
+
+    private EmployeePosition position;
+
+    private LocalDate hireDate;
+
+    private BigDecimal salary;
 }
