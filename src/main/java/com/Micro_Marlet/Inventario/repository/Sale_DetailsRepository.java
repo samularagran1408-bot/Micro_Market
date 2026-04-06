@@ -1,8 +1,12 @@
 package com.Micro_Marlet.Inventario.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.Micro_Marlet.Inventario.entity.Sale_Details;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import java.util.List;
 
+@Repository
 public interface Sale_DetailsRepository extends JpaRepository<Sale_Details, Long> {
+    List<Sale_Details> findBySaleId(Long saleId);
+    List<Sale_Details> findByProductId(Long productId);
 }

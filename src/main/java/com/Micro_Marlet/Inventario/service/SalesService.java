@@ -13,16 +13,15 @@ import com.Micro_Marlet.Inventario.repository.EmployeesRepository;
 import com.Micro_Marlet.Inventario.repository.ProductsRepository;
 import com.Micro_Marlet.Inventario.repository.SalesRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-//terminado
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class SalesService {
@@ -31,112 +30,130 @@ public class SalesService {
     private final EmployeesRepository employeesRepository;
     private final ProductsRepository productsRepository;
 
+    private static final BigDecimal TAX_RATE = new BigDecimal("0.19");
+
     @Transactional
     public SalesResponseDTO createSale(SalesRequestDTO request) {
+        
+        // 1. Buscar empleado
         Employees employee = employeesRepository.findById(request.getEmployeeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Empleado", request.getEmployeeId()));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado con ID: " + request.getEmployeeId()));
+        
+        // 2. Crear venta
         Sales sale = new Sales();
         sale.setEmployee(employee);
-        if (request.getDate() != null) {
-            sale.setSaleDate(request.getDate());
-        } else {
-            sale.setSaleDate(LocalDateTime.now());
-        }
-
-        for (Sale_DetailsRequestDTO lineDto : request.getDetails()) {
-            Products product = productsRepository.findById(lineDto.getProductId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto", lineDto.getProductId()));
-
-            if (product.getStatus() == null || !product.getStatus()) {
-                throw new IllegalArgumentException("Producto inactivo: " + product.getId());
-            }
-
-            int qty = lineDto.getQuantity();
-            if (product.getStock() < qty) {
-                throw new IllegalArgumentException(
-                        "Stock insuficiente para " + product.getName() + " (hay " + product.getStock() + ")");
-            }
-
-            BigDecimal unitPrice = BigDecimal.valueOf(product.getPrice()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal lineTotal = unitPrice.multiply(BigDecimal.valueOf(qty)).setScale(2, RoundingMode.HALF_UP);
-
-            Sale_Details line = new Sale_Details();
-            line.setSale(sale);
-            line.setProduct(product);
-            line.setQuantity(qty);
-            line.setUnitPrice(unitPrice);
-            line.setLineTotal(lineTotal);
-
-            product.setStock(product.getStock() - qty);
-            productsRepository.save(product);
-
-            sale.getSale_Details().add(line);
-        }
-
-        setTotalsFromLines(sale);
-
-        Sales saved = salesRepository.save(sale);
-        return mapToResponse(saved);
-    }
-
-    @Transactional(readOnly = true)
-    public List<SalesResponseDTO> getAllSales() {
-        List<Sales> sales = salesRepository.findAll();
-        List<SalesResponseDTO> list = new ArrayList<>();
-        for (Sales s : sales) {
-            list.add(mapToResponse(s));
-        }
-        return list;
-    }
-
-    @Transactional(readOnly = true)
-    public SalesResponseDTO getSaleById(@NonNull Long id) {
-        Sales sale = salesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Venta", id));
-        return mapToResponse(sale);
-    }
-
-    // subtotal = suma de líneas; impuesto 0; total = subtotal (luego se puede cambiar la regla)
-    private void setTotalsFromLines(Sales sale) {
+        sale.setDate(request.getDate() != null ? request.getDate() : LocalDateTime.now());
+        
         BigDecimal subtotal = BigDecimal.ZERO;
-        for (Sale_Details line : sale.getSale_Details()) {
-            subtotal = subtotal.add(line.getLineTotal());
+        
+        // 3. Procesar cada detalle
+        for (Sale_DetailsRequestDTO detailDTO : request.getDetails()) {
+            
+            Products product = productsRepository.findById(detailDTO.getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + detailDTO.getProductId()));
+            
+            // Validar stock
+            if (product.getStock() < detailDTO.getQuantity()) {
+                throw new IllegalArgumentException(
+                    "Stock insuficiente para: " + product.getName() + 
+                    ". Disponible: " + product.getStock() + 
+                    ", Solicitado: " + detailDTO.getQuantity()
+                );
+            }
+            
+            // Calcular subtotal del detalle
+            BigDecimal unitPrice = BigDecimal.valueOf(product.getPrice()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal lineSubtotal = unitPrice.multiply(BigDecimal.valueOf(detailDTO.getQuantity()))
+                    .setScale(2, RoundingMode.HALF_UP);
+            
+            // Crear detalle
+            Sale_Details detail = new Sale_Details();
+            detail.setSale(sale);
+            detail.setProduct(product);
+            detail.setQuantity(detailDTO.getQuantity());
+            detail.setUnitPrice(unitPrice);
+            detail.setSubtotal(lineSubtotal);
+            
+            sale.getSaleDetails().add(detail);
+            
+            // Restar stock
+            product.setStock(product.getStock() - detailDTO.getQuantity());
+            productsRepository.save(product);
+            
+            // Acumular subtotal
+            subtotal = subtotal.add(lineSubtotal);
         }
+        
+        // 4. Calcular totales
         subtotal = subtotal.setScale(2, RoundingMode.HALF_UP);
-        BigDecimal tax = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        BigDecimal tax = subtotal.multiply(TAX_RATE).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal total = subtotal.add(tax).setScale(2, RoundingMode.HALF_UP);
+        
         sale.setSubtotal(subtotal);
         sale.setTax(tax);
-        sale.setTotal(subtotal.add(tax));
+        sale.setTotal(total);
+        
+        // 5. Guardar venta
+        Sales savedSale = salesRepository.save(sale);
+        
+        return mapToResponseDTO(savedSale);
     }
-
-    private SalesResponseDTO mapToResponse(Sales sale) {
-        SalesResponseDTO dto = new SalesResponseDTO();
-        dto.setId(sale.getId());
-        dto.setDate(sale.getSaleDate());
-        dto.setTotal(sale.getSubtotal());
-        dto.setTax(sale.getTax());
-        dto.setSubtotal(sale.getTotal());
-        if (sale.getEmployee() != null) {
-            dto.setEmployeeId(sale.getEmployee().getId());
-            dto.setEmployeeName(sale.getEmployee().getFullName());
-        }
-        for (Sale_Details line : sale.getSale_Details()) {
-            dto.getDetails().add(mapDetailToResponse(line));
-        }
-        return dto;
+    
+    @Transactional(readOnly = true)
+    public List<SalesResponseDTO> getAllSales() {
+        return salesRepository.findAll().stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
-
-    private Sale_DetailsResponseDTO mapDetailToResponse(Sale_Details line) {
-        Sale_DetailsResponseDTO d = new Sale_DetailsResponseDTO();
-        d.setId(line.getId());
-        if (line.getProduct() != null) {
-            d.setProductId(line.getProduct().getId());
-            d.setProductName(line.getProduct().getName());
+    
+    @Transactional(readOnly = true)
+    public SalesResponseDTO getSaleById(Long id) {
+        Sales sale = salesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada con ID: " + id));
+        return mapToResponseDTO(sale);
+    }
+    
+    @Transactional(readOnly = true)
+    public List<SalesResponseDTO> getSalesByEmployee(Long employeeId) {
+        return salesRepository.findByEmployeeId(employeeId).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional(readOnly = true)
+    public List<SalesResponseDTO> getSalesByDateRange(LocalDateTime start, LocalDateTime end) {
+        return salesRepository.findByDateBetween(start, end).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+    
+    private SalesResponseDTO mapToResponseDTO(Sales sale) {
+        SalesResponseDTO response = new SalesResponseDTO();
+        response.setId(sale.getId());
+        response.setDate(sale.getDate());
+        response.setSubtotal(sale.getSubtotal());
+        response.setTax(sale.getTax());
+        response.setTotal(sale.getTotal());
+        response.setEmployeeId(sale.getEmployee().getId());
+        response.setEmployeeName(sale.getEmployee().getFullName());
+        
+        if (sale.getSaleDetails() != null) {
+            response.setDetails(sale.getSaleDetails().stream()
+                    .map(this::mapDetailToResponseDTO)
+                    .collect(Collectors.toList()));
         }
-        d.setQuantity(line.getQuantity());
-        d.setUnitPrice(line.getUnitPrice());
-        d.setLineTotal(line.getLineTotal());
-        return d;
+        
+        return response;
+    }
+    
+    private Sale_DetailsResponseDTO mapDetailToResponseDTO(Sale_Details detail) {
+        Sale_DetailsResponseDTO response = new Sale_DetailsResponseDTO();
+        response.setId(detail.getId());
+        response.setProductId(detail.getProduct().getId());
+        response.setProductName(detail.getProduct().getName());
+        response.setQuantity(detail.getQuantity());
+        response.setUnitPrice(detail.getUnitPrice());
+        response.setSubtotal(detail.getSubtotal());
+        return response;
     }
 }

@@ -1,76 +1,141 @@
 package com.Micro_Marlet.Inventario.service;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.data.domain.Sort;
+import com.Micro_Marlet.Inventario.DTO.Sale_DetailsRequestDTO;
+import com.Micro_Marlet.Inventario.DTO.Sale_DetailsResponseDTO;
+import com.Micro_Marlet.Inventario.entity.Products;
+import com.Micro_Marlet.Inventario.entity.Sale_Details;
+import com.Micro_Marlet.Inventario.entity.Sales;
+import com.Micro_Marlet.Inventario.exception.ResourceNotFoundException;
+import com.Micro_Marlet.Inventario.repository.ProductsRepository;
+import com.Micro_Marlet.Inventario.repository.Sale_DetailsRepository;
+import com.Micro_Marlet.Inventario.repository.SalesRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.Micro_Marlet.Inventario.DTO.Sale_DetailsRequestDTO;
-import com.Micro_Marlet.Inventario.DTO.Sale_DetailsResponseDTO;
-import com.Micro_Marlet.Inventario.entity.Sale_Details;
-import com.Micro_Marlet.Inventario.repository.Sale_DetailsRepository;
-
-import lombok.RequiredArgsConstructor;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class Sale_DetailsService {
 
-    private final Sale_DetailsRepository repository;
+    private final Sale_DetailsRepository saleDetailsRepository;
+    private final SalesRepository salesRepository;
+    private final ProductsRepository productsRepository;
 
     @Transactional(readOnly = true)
-    public List<Sale_DetailsResponseDTO> findAll() {
-        return repository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
-                .map(this::toResponse)
-                .toList();
+    public List<Sale_DetailsResponseDTO> getAllSaleDetails() {
+        return saleDetailsRepository.findAll().stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public Optional<Sale_DetailsResponseDTO> findById(Long id) {
-        return repository.findById(id).map(this::toResponse);
+    public Sale_DetailsResponseDTO getSaleDetailById(Long id) {
+        Sale_Details detail = saleDetailsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Detalle de venta no encontrado con ID: " + id));
+        return mapToResponseDTO(detail);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Sale_DetailsResponseDTO> getSaleDetailsBySaleId(Long saleId) {
+        return saleDetailsRepository.findBySaleId(saleId).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Sale_DetailsResponseDTO> getSaleDetailsByProductId(Long productId) {
+        return saleDetailsRepository.findByProductId(productId).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Sale_DetailsResponseDTO create(Sale_DetailsRequestDTO request) {
-        Sale_Details entity = new Sale_Details();
-        applyRequest(entity, request);
-        return toResponse(repository.save(entity));
-    }
+    public Sale_DetailsResponseDTO createSaleDetail(Sale_DetailsRequestDTO requestDTO) {
+        // Buscar la venta
+        Sales sale = salesRepository.findById(requestDTO.getSaleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Venta no encontrada con ID: " + requestDTO.getSaleId()));
 
-    @Transactional
-    public Optional<Sale_DetailsResponseDTO> update(Long id, Sale_DetailsRequestDTO request) {
-        return repository.findById(id).map(entity -> {
-            applyRequest(entity, request);
-            return toResponse(repository.save(entity));
-        });
-    }
+        // Buscar el producto
+        Products product = productsRepository.findById(requestDTO.getProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + requestDTO.getProductId()));
 
-    @Transactional
-    public boolean deleteById(Long id) {
-        if (!repository.existsById(id)) {
-            return false;
+        // Validar stock
+        if (product.getStock() < requestDTO.getQuantity()) {
+            throw new IllegalArgumentException("Stock insuficiente para: " + product.getName());
         }
-        repository.deleteById(id);
-        return true;
+
+        // Calcular subtotal
+        BigDecimal unitPrice = BigDecimal.valueOf(product.getPrice()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal subtotal = unitPrice.multiply(BigDecimal.valueOf(requestDTO.getQuantity()))
+                .setScale(2, RoundingMode.HALF_UP);
+
+        // Crear detalle
+        Sale_Details detail = new Sale_Details();
+        detail.setSale(sale);
+        detail.setProduct(product);
+        detail.setQuantity(requestDTO.getQuantity());
+        detail.setUnitPrice(unitPrice);
+        detail.setSubtotal(subtotal);
+
+        // Restar stock
+        product.setStock(product.getStock() - requestDTO.getQuantity());
+        productsRepository.save(product);
+
+        // Guardar detalle
+        Sale_Details savedDetail = saleDetailsRepository.save(detail);
+
+        // Actualizar totales de la venta
+        updateSaleTotals(sale);
+
+        return mapToResponseDTO(savedDetail);
     }
 
-    private void applyRequest(Sale_Details entity, Sale_DetailsRequestDTO body) {
-        entity.setSaleId(body.getSaleId());
-        entity.setProductId(body.getProductId());
-        entity.setQuantity(body.getQuantity());
-        entity.setUnitPrice(body.getUnitPrice());
-        entity.setSubtotal(body.getQuantity() * body.getUnitPrice());
+    @Transactional
+    public void deleteSaleDetail(Long id) {
+        Sale_Details detail = saleDetailsRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Detalle de venta no encontrado con ID: " + id));
+
+        // Devolver stock al producto
+        Products product = detail.getProduct();
+        product.setStock(product.getStock() + detail.getQuantity());
+        productsRepository.save(product);
+
+        // Eliminar detalle
+        saleDetailsRepository.delete(detail);
+
+        // Actualizar totales de la venta
+        updateSaleTotals(detail.getSale());
     }
 
-    private Sale_DetailsResponseDTO toResponse(Sale_Details e) {
-        return new Sale_DetailsResponseDTO(
-                e.getId(),
-                e.getSaleId(),
-                e.getProductId(),
-                e.getQuantity(),
-                e.getUnitPrice(),
-                e.getSubtotal());
+    private void updateSaleTotals(Sales sale) {
+        BigDecimal subtotal = sale.getSaleDetails().stream()
+                .map(Sale_Details::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        BigDecimal tax = subtotal.multiply(new BigDecimal("0.19")).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal total = subtotal.add(tax).setScale(2, RoundingMode.HALF_UP);
+
+        sale.setSubtotal(subtotal);
+        sale.setTax(tax);
+        sale.setTotal(total);
+
+        salesRepository.save(sale);
+    }
+
+    private Sale_DetailsResponseDTO mapToResponseDTO(Sale_Details detail) {
+        Sale_DetailsResponseDTO response = new Sale_DetailsResponseDTO();
+        response.setId(detail.getId());
+        response.setProductId(detail.getProduct().getId());
+        response.setProductName(detail.getProduct().getName());
+        response.setQuantity(detail.getQuantity());
+        response.setUnitPrice(detail.getUnitPrice());
+        response.setSubtotal(detail.getSubtotal());
+        return response;
     }
 }

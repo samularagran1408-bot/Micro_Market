@@ -16,8 +16,8 @@ public class Sales {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "sale_date")
-    private LocalDateTime saleDate = LocalDateTime.now();
+    @Column(name = "date")
+    private LocalDateTime date = LocalDateTime.now();
     
     @Column(name = "subtotal", precision = 10, scale = 2)
     private BigDecimal subtotal;
@@ -32,7 +32,6 @@ public class Sales {
     @JoinColumn(name = "employee_id", nullable = false)
     private Employees employee;
     
-    // Inicializar la lista para evitar NullPointerException
     @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Sale_Details> sale_Details = new ArrayList<>();
+    private List<Sale_Details> saleDetails = new ArrayList<>();
 }

@@ -1,100 +1,147 @@
 package com.Micro_Marlet.Inventario.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.Micro_Marlet.Inventario.DTO.EmployeesRequestDTO;
 import com.Micro_Marlet.Inventario.DTO.EmployeesResponseDTO;
 import com.Micro_Marlet.Inventario.entity.Employees;
+import com.Micro_Marlet.Inventario.entity.EmployeePosition;
+import com.Micro_Marlet.Inventario.exception.ResourceNotFoundException;
 import com.Micro_Marlet.Inventario.repository.EmployeesRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class EmployeesService {
-
+    
     private final EmployeesRepository employeesRepository;
 
-    public EmployeesService(EmployeesRepository employeesRepository) {
-        this.employeesRepository = employeesRepository;
+    @Transactional
+    public EmployeesResponseDTO createEmployee(EmployeesRequestDTO request) {
+        
+        // Validar cédula única
+        if (employeesRepository.existsByIdNumber(request.getIdNumber())) {
+            throw new IllegalArgumentException("Ya existe un empleado con la cédula: " + request.getIdNumber());
+        }
+        
+        // Validar cargo
+        EmployeePosition position;
+        try {
+            position = EmployeePosition.valueOf(request.getPosition());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Cargo inválido. Los cargos permitidos son: ADMINISTRATOR, CASHIER, ASSISTANT");
+        }
+        
+        // Crear empleado
+        Employees employee = new Employees();
+        employee.setIdNumber(request.getIdNumber());
+        employee.setFullName(request.getFullName());
+        employee.setPosition(position);
+        employee.setHireDate(request.getHireDate());
+        employee.setSalary(request.getSalary());
+        employee.setStatus(request.getStatus() != null ? request.getStatus() : true);
+        
+        Employees savedEmployee = employeesRepository.save(employee);
+        return mapToResponseDTO(savedEmployee);
     }
 
-    public List<EmployeesResponseDTO> getAllActive() {
-        return employeesRepository.findAllByStatusTrue()
-                .stream()
-                .map(this::toResponse)
+    @Transactional(readOnly = true)
+    public List<EmployeesResponseDTO> getAllEmployees() {
+        return employeesRepository.findAll().stream()
+                .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    public EmployeesResponseDTO getById(Long id) {
-        Employees entity = employeesRepository.findByIdAndStatusTrue(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
-        return toResponse(entity);
+    @Transactional(readOnly = true)
+    public EmployeesResponseDTO getEmployeeById(Long id) {
+        Employees employee = employeesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empleado", id));
+        return mapToResponseDTO(employee);
+    }
+
+    @Transactional(readOnly = true)
+    public EmployeesResponseDTO getEmployeeByIdNumber(String idNumber) {
+        Employees employee = employeesRepository.findByIdNumber(idNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Empleado con cédula"));
+        return mapToResponseDTO(employee);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmployeesResponseDTO> getEmployeesByPosition(String position) {
+        EmployeePosition empPosition = EmployeePosition.valueOf(position);
+        return employeesRepository.findByPosition(empPosition).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmployeesResponseDTO> getEmployeesByHireDateRange(LocalDate startDate, LocalDate endDate) {
+        return employeesRepository.findByHireDateBetween(startDate, endDate).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public EmployeesResponseDTO create(EmployeesRequestDTO request) {
-        if (employeesRepository.existsByIdNumber(request.getIdNumber())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Ya existe un empleado con ese número de identificación");
+    public EmployeesResponseDTO updateEmployee(Long id, EmployeesRequestDTO request) {
+        Employees employee = employeesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empleado", id));
+        
+        // Validar cédula única si cambió
+        if (!employee.getIdNumber().equals(request.getIdNumber()) && 
+            employeesRepository.existsByIdNumber(request.getIdNumber())) {
+            throw new IllegalArgumentException("Ya existe otro empleado con la cédula: " + request.getIdNumber());
         }
-        Employees entity = new Employees();
-        applyRequest(entity, request);
-        entity.setStatus(true);
-        return toResponse(employeesRepository.save(entity));
-    }
-
-    @Transactional
-    public EmployeesResponseDTO update(Long id, EmployeesRequestDTO request) {
-        Employees entity = employeesRepository.findByIdAndStatusTrue(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
-        if (!Objects.equals(entity.getIdNumber(), request.getIdNumber())
-                && employeesRepository.existsByIdNumberAndIdNot(request.getIdNumber(), id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Ya existe un empleado con ese número de identificación");
+        
+        // Validar cargo
+        EmployeePosition position = EmployeePosition.valueOf(request.getPosition());
+        
+        // Actualizar campos
+        employee.setIdNumber(request.getIdNumber());
+        employee.setFullName(request.getFullName());
+        employee.setPosition(position);
+        employee.setHireDate(request.getHireDate());
+        employee.setSalary(request.getSalary());
+        if (request.getStatus() != null) {
+            employee.setStatus(request.getStatus());
         }
-        applyRequest(entity, request);
-        return toResponse(employeesRepository.save(entity));
+        
+        Employees updatedEmployee = employeesRepository.save(employee);
+        return mapToResponseDTO(updatedEmployee);
     }
 
     @Transactional
-    public void softDelete(Long id) {
-        Employees entity = employeesRepository.findByIdAndStatusTrue(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
-        entity.setStatus(false);
-        employeesRepository.save(entity);
+    public void deleteEmployee(Long id) {
+        Employees employee = employeesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empleado", id));
+        
+        employee.setStatus(false);  // Soft delete
+        employeesRepository.save(employee);
     }
 
     @Transactional
-    public EmployeesResponseDTO activate(Long id) {
-        Employees entity = employeesRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Empleado no encontrado"));
-        entity.setStatus(true);
-        return toResponse(employeesRepository.save(entity));
+    public EmployeesResponseDTO activateEmployee(Long id) {
+        Employees employee = employeesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Empleado", id));
+        
+        employee.setStatus(true);
+        Employees activatedEmployee = employeesRepository.save(employee);
+        return mapToResponseDTO(activatedEmployee);
     }
 
-    private void applyRequest(Employees entity, EmployeesRequestDTO request) {
-        entity.setIdNumber(request.getIdNumber());
-        entity.setFullName(request.getFullName());
-        entity.setPosition(request.getPosition());
-        entity.setHireDate(request.getHireDate());
-        entity.setSalary(request.getSalary());
-    }
-
-    private EmployeesResponseDTO toResponse(Employees entity) {
-        EmployeesResponseDTO dto = new EmployeesResponseDTO();
-        dto.setId(entity.getId());
-        dto.setIdNumber(entity.getIdNumber());
-        dto.setFullName(entity.getFullName());
-        dto.setPosition(entity.getPosition());
-        dto.setHireDate(entity.getHireDate());
-        dto.setSalary(entity.getSalary());
-        dto.setStatus(entity.getStatus());
-        return dto;
+    private EmployeesResponseDTO mapToResponseDTO(Employees employee) {
+        EmployeesResponseDTO response = new EmployeesResponseDTO();
+        response.setId(employee.getId());
+        response.setIdNumber(employee.getIdNumber());
+        response.setFullName(employee.getFullName());
+        response.setPosition(employee.getPosition().name());
+        response.setHireDate(employee.getHireDate());
+        response.setSalary(employee.getSalary());
+        response.setStatus(employee.getStatus());
+        return response;
     }
 }
