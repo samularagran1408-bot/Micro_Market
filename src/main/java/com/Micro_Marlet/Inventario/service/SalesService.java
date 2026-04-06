@@ -35,18 +35,18 @@ public class SalesService {
     @Transactional
     public SalesResponseDTO createSale(SalesRequestDTO request) {
         
-        // 1. Buscar empleado
+        // Buscar empleado
         Employees employee = employeesRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado con ID: " + request.getEmployeeId()));
         
-        // 2. Crear venta
+        // Crear venta
         Sales sale = new Sales();
         sale.setEmployee(employee);
         sale.setDate(request.getDate() != null ? request.getDate() : LocalDateTime.now());
         
         BigDecimal subtotal = BigDecimal.ZERO;
         
-        // 3. Procesar cada detalle
+        // Procesar cada detalle
         for (Sale_DetailsRequestDTO detailDTO : request.getDetails()) {
             
             Products product = productsRepository.findById(detailDTO.getProductId())
@@ -84,7 +84,7 @@ public class SalesService {
             subtotal = subtotal.add(lineSubtotal);
         }
         
-        // 4. Calcular totales
+        // Calcular totales
         subtotal = subtotal.setScale(2, RoundingMode.HALF_UP);
         BigDecimal tax = subtotal.multiply(TAX_RATE).setScale(2, RoundingMode.HALF_UP);
         BigDecimal total = subtotal.add(tax).setScale(2, RoundingMode.HALF_UP);
@@ -93,7 +93,7 @@ public class SalesService {
         sale.setTax(tax);
         sale.setTotal(total);
         
-        // 5. Guardar venta
+        // Guardar venta
         Sales savedSale = salesRepository.save(sale);
         
         return mapToResponseDTO(savedSale);

@@ -23,7 +23,7 @@ public class SuppliersService {
 
     @Transactional
     public SuppliersResponseDTO createSupplier(SuppliersRequestDTO request) {
-        // Validar que no exista un proveedor con el mismo email (opcional)
+        // Validar que no exista un proveedor con el mismo email 
         if (request.getEmail() != null && !request.getEmail().isEmpty()) {
             Suppliers supplier = suppliersRepository.findByEmail(request.getEmail());
             if (supplier != null) {
