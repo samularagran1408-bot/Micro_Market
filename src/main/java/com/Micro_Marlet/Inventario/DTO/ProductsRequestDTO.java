@@ -1,11 +1,13 @@
 package com.Micro_Marlet.Inventario.DTO;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class ProductsRequestDTO {
+
     @NotBlank(message = "El código de barras es obligatorio")
     @Size(max = 100, message = "El código de barras no puede exceder los 100 caracteres")
     private String barcode;
@@ -22,5 +24,6 @@ public class ProductsRequestDTO {
 
     private Boolean status;
 
+    @NotNull(message = "La categoría es obligatoria")
     private Long categoryId;
 }
