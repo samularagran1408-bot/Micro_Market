@@ -3,9 +3,7 @@ package com.Micro_Marlet.Inventario.DTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 
-@Data
 public class ProductsRequestDTO {
 
     @NotBlank(message = "El código de barras es obligatorio")

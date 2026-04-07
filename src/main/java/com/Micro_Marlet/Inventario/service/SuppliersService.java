@@ -1,6 +1,7 @@
 package com.Micro_Marlet.Inventario.service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class SuppliersService {
 
     @Transactional
     public SuppliersResponseDTO createSupplier(SuppliersRequestDTO request) {
-        // Validar que no exista un proveedor con el mismo email (opcional)
+        // Validar que no exista un proveedor con el mismo email 
         if (request.getEmail() != null && !request.getEmail().isEmpty()) {
             Suppliers supplier = suppliersRepository.findByEmail(request.getEmail());
             if (supplier != null) {
@@ -80,7 +81,7 @@ public class SuppliersService {
             supplier.setStatus(request.getStatus());
         }
         
-        Suppliers updatedSupplier = suppliersRepository.save(supplier);
+        Suppliers updatedSupplier = suppliersRepository.save(Objects.requireNonNull(supplier));
         return mapToResponseDTO(updatedSupplier);
     }
 

@@ -1,17 +1,18 @@
 package com.Micro_Marlet.Inventario.DTO;
 
 import lombok.Data;
-
-import java.math.BigDecimal;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-
-import com.Micro_Marlet.Inventario.entity.Employees;
+import java.util.List;
 
 @Data
 public class SalesRequestDTO {
-    private LocalDateTime date = LocalDateTime.now();
-    private BigDecimal subtotal;
-    private BigDecimal tax;
-    private BigDecimal total;
-    private Employees employee;
+    
+    @NotNull(message = "El ID del empleado es obligatorio")
+    private Long employeeId;
+    
+    private LocalDateTime date;
+    
+    @NotNull(message = "Los detalles de la venta son obligatorios")
+    private List<Sale_DetailsRequestDTO> details;
 }
