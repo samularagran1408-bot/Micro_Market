@@ -1,0 +1,866 @@
+[
+  {
+    "v": 11,
+    "id": "cmn1z678d7m65gy1mxa42jsi6",
+    "name": "Micro_Market",
+    "folders": [
+      {
+        "v": 11,
+        "id": "cmn1z6h277m68gy1mhwd5wjgc",
+        "name": "categories",
+        "folders": [],
+        "requests": [
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n    \"name\": \"Snacks\",\n    \"description\": \"Comida ligera\",\n    \"status\": true\n}",
+              "contentType": "application/json"
+            },
+            "name": "categories_management Create",
+            "method": "POST",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/categories",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmn2d33cr009kgy1m8z3m0v9o"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": "application/json"
+            },
+            "name": "categories_management Get",
+            "method": "GET",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/categories",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnpzrqkb06wpfv1l5lyzzuk1"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": "application/json"
+            },
+            "name": "categories_management GetById",
+            "method": "GET",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/categories/2",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq07yg806m0fz1lf9l41lq5"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "categories_management DeletById",
+            "method": "DELETE",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/categories/2",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0ac7a06zcfv1l65hn1q4j"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n    \"name\": \"Frituras\",\n    \"description\": \"Comida ligera\",\n    \"status\": true\n  }",
+              "contentType": "application/json"
+            },
+            "name": "categories_management UpdateById",
+            "method": "PUT",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/categories/3",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0by0g06qifz1loytisd7g"
+          }
+        ],
+        "auth": {
+          "authType": "inherit",
+          "authActive": true
+        },
+        "headers": [],
+        "variables": [],
+        "description": null
+      },
+      {
+        "v": 11,
+        "id": "cmn1z6m7j6mraf21mscsjt7rf",
+        "name": "products",
+        "folders": [],
+        "requests": [
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n    \"barcode\": \"49384348383\",\n    \"name\": \"Ajax\",\n    \"description\": \"Lava platos\",\n    \"price\": 20000,\n    \"stock\": 13,\n    \"categoryId\": 2,\n    \"status\": true\n}",
+              "contentType": "application/json"
+            },
+            "name": "products_management",
+            "method": "POST",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/products",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmn2db3g6009ngy1mrtkqefdg"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "products_management Get",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/products",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0kl6d07csfv1lkvryoc5i"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "products_management GetById",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/products/3",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0m0d506xvfz1llrby33ze"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "products_management DeleteById",
+            "method": "DELETE",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/products/3",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0o48k07drfv1l6z8a4p8l"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "products_management ActivateById",
+            "method": "PATCH",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/products/3/activate",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0pdn307dwfv1lx44p32fj"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n    \"barcode\": \"666616432677\",\n    \"name\": \"Mantequilla el culo te brilla\",\n    \"description\": \"Lacteo para engrasar\",\n    \"price\": 20000,\n    \"stock\": 13,\n    \"categoryId\": 1,\n    \"status\": true\n}",
+              "contentType": "application/json"
+            },
+            "name": "products_management UpdateById",
+            "method": "PUT",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/products/3",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0sefj06zwfz1ljh3b9yax"
+          }
+        ],
+        "auth": {
+          "authType": "inherit",
+          "authActive": true
+        },
+        "headers": [],
+        "variables": [],
+        "description": null
+      },
+      {
+        "v": 11,
+        "id": "cmn1z6svs6mrbf21my8822o0b",
+        "name": "suppliers",
+        "folders": [],
+        "requests": [
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n    \"name\": \"erdanojosa\",\n    \"phone\": \"320394843\",\n    \"email\": \"erjsmadef@gmail.com\",\n    \"address\": \"La cecilia\",\n    \"status\": true\n}",
+              "contentType": "application/json"
+            },
+            "name": "suppliers_management",
+            "method": "POST",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/suppliers",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmn2dbclc009ogy1mx0bmcos0"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "supplierss_management Get",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/suppliers",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq0y24607gmfv1lqx50toh7"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "supplierss_management GetById",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/suppliers/5",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq118it074kfz1lqjvvtyaa"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "supplierss_management DeleteById",
+            "method": "DELETE",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/suppliers/5",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq137qo07l0fv1lkw4s9rzg"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "supplierss_management ActivateById",
+            "method": "PATCH",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/suppliers/5/activate",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq14mjb074xfz1lbrjk7664"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n  \t\"name\": \"Samu\",\n    \"phone\": \"3203945876\",\n    \"email\": \"Samu@gamil.com\",\n    \"address\": \"Barrio Pescaito #20-98, Santa Marta\",\n    \"status\": true\n  }",
+              "contentType": "application/json"
+            },
+            "name": "supplierss_management UpdateById",
+            "method": "PUT",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/suppliers/5",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq161yz07l8fv1lejth72t9"
+          }
+        ],
+        "auth": {
+          "authType": "inherit",
+          "authActive": true
+        },
+        "headers": [],
+        "variables": [],
+        "description": null
+      },
+      {
+        "v": 11,
+        "id": "cmn1z6zs57m69gy1m2nk5q4gi",
+        "name": "sale_details",
+        "folders": [],
+        "requests": [
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "sale-details_management",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/sale-details",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmn2dcrae6omhf21mx5se8hvd"
+          }
+        ],
+        "auth": {
+          "authType": "inherit",
+          "authActive": true
+        },
+        "headers": [],
+        "variables": [],
+        "description": null
+      },
+      {
+        "v": 11,
+        "id": "cmn1z72r26mrcf21mm7j2xoop",
+        "name": "sales",
+        "folders": [],
+        "requests": [
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n    \"employeeId\": 7,\n    \"date\": \"\",\n    \"details\": [\n        {\n            \"productId\": 10,\n            \"quantity\": 4\n        }\n    ]\n}",
+              "contentType": "application/json"
+            },
+            "name": "sales_management",
+            "method": "POST",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/sales",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmn2dd83a6omif21mco089bku"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "sales_management Get",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/sales",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq1lcl208g7fv1lqty88ujx"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "sales_management GetByid",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/sales/5",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq262yg097hfz1ldgl1w94d"
+          }
+        ],
+        "auth": {
+          "authType": "inherit",
+          "authActive": true
+        },
+        "headers": [],
+        "variables": [],
+        "description": null
+      },
+      {
+        "v": 11,
+        "id": "cmn1z7ecn6mref21mjsykxqke",
+        "name": "employees",
+        "folders": [],
+        "requests": [
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n    \"idNumber\": \"458324900\",\n    \"fullName\": \"Jeremy Martín Castañeda Benavides\",\n    \"position\": \"ASSISTANT\",\n    \"hireDate\": \"2026-01-15\",\n    \"salary\": 2500000,\n    \"status\": true\n}",
+              "contentType": "application/json"
+            },
+            "name": "employees_management",
+            "method": "POST",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/employees",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmn2ddj0t009pgy1myxfry188"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "employees_management Get",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/employees",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq34xf70c2sfz1ld6rcks40"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "employees_management GetById",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/employees/1",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq37m2z0bvifv1l862832rx"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "employees_management DeleteById",
+            "method": "DELETE",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/employees/6",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq3e8240dqhfz1lfqi43gh6"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "employees_management ActivateById",
+            "method": "PATCH",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/employees/6/activate",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq3ful10dqmfz1leu81wonm"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "employees_management UpdateById",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "https://echo.hoppscotch.io",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq3ha950c67fv1ljb8hk3wj"
+          }
+        ],
+        "auth": {
+          "authType": "inherit",
+          "authActive": true
+        },
+        "headers": [],
+        "variables": [],
+        "description": null
+      },
+      {
+        "v": 11,
+        "id": "cmnf3z9zo0qbth91l8bpp3tas",
+        "name": "warehouse_entries",
+        "folders": [],
+        "requests": [
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n\t\"quantity\": 2,\n  \t\"entryDate\": \"2026-04-07\",\n  \t\"productId\": 10,\n  \t\"supplierNit\": 10\n}",
+              "contentType": "application/json"
+            },
+            "name": "warehouse-entries_management",
+            "method": "GET",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/warehouse_entries",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnf401zt0h0bij1lsd4hvvpy"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": null,
+              "contentType": null
+            },
+            "name": "warehouse-entries_management Get",
+            "method": "GET",
+            "params": [],
+            "headers": [],
+            "endpoint": "http://localhost:9091/api/warehouse_entries/1",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq2cz9o0a4ofz1lwrbqf7vr"
+          },
+          {
+            "v": "17",
+            "auth": {
+              "authType": "inherit",
+              "authActive": true
+            },
+            "body": {
+              "body": "{\n\t\"quantity\": 2,\n  \t\"entryDate\": \"2026-04-07\",\n  \t\"productId\": 10,\n  \t\"supplierNit\": 10\n}",
+              "contentType": "application/json"
+            },
+            "name": "warehouse-entries_management Post",
+            "method": "POST",
+            "params": [],
+            "headers": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "active": true,
+                "description": ""
+              }
+            ],
+            "endpoint": "http://localhost:9091/api/warehouse_entries",
+            "responses": {},
+            "testScript": "",
+            "description": null,
+            "preRequestScript": "",
+            "requestVariables": [],
+            "id": "cmnq2xxzz0benfz1llawtwqix"
+          }
+        ],
+        "auth": {
+          "authType": "inherit",
+          "authActive": true
+        },
+        "headers": [],
+        "variables": [],
+        "description": null
+      }
+    ],
+    "requests": [],
+    "auth": {
+      "authType": "inherit",
+      "authActive": true
+    },
+    "headers": [],
+    "variables": [],
+    "description": null
+  }
+]
